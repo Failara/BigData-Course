@@ -1,1 +1,0 @@
-long_words_len_gt_5	15092
