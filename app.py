@@ -1,6 +1,13 @@
 import joblib
 import numpy as np
+import pandas as pd
 import os
+import warnings
+
+warnings.filterwarnings('ignore')
+
+FEATURE_NAMES = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
+                 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal']
 
 def load_assets():
     """Завантажує навчену модель та скейлер."""
@@ -31,9 +38,10 @@ def get_user_input():
         ca = float(input("Кількість великих судин (0-3): "))
         thal = float(input("Таласемія (1 = норм, 2 = фіксований дефект, 3 = оборотний): "))
         
-        # Формуємо масив даних (порядок має збігатися з тренуванням!)
-        features = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
-        return features
+        data = [[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]]
+        features_df = pd.DataFrame(data, columns=FEATURE_NAMES)
+        
+        return features_df
     except ValueError:
         print("Помилка: Будь ласка, вводьте тільки цифрові значення.")
         return None
@@ -46,11 +54,11 @@ def main():
         return
 
     while True:
-        features = get_user_input()
+        features_df = get_user_input()
         
-        if features is not None:
-            # 1. Масштабування вхідних даних
-            features_scaled = scaler.transform(features)
+        if features_df is not None:
+            # 1. Масштабування вхідних даних 
+            features_scaled = scaler.transform(features_df)
             
             # 2. Прогноз
             prediction = model.predict(features_scaled)[0]
